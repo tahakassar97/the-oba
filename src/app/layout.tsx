@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Poppins, Cairo } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
@@ -40,24 +41,26 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${poppins.variable} ${cairo.variable}`}>
-        <AuthProvider>
-          <TanstackProvider>
-            <NextTopLoader
-              color='#000'
-              initialPosition={0.3}
-              crawlSpeed={200}
-              height={4}
-              crawl={true}
-              showSpinner={false}
-              easing='ease'
-              speed={200}
-              shadow='0 0 10px #2299DD,0 0 5px #2299DD'
-              zIndex={1600}
-              showAtBottom={false}
-            />
-            <ToastProvider>{children}</ToastProvider>
-          </TanstackProvider>
-        </AuthProvider>
+        <Suspense>
+          <AuthProvider>
+            <TanstackProvider>
+              <NextTopLoader
+                color='#000'
+                initialPosition={0.3}
+                crawlSpeed={200}
+                height={4}
+                crawl={true}
+                showSpinner={false}
+                easing='ease'
+                speed={200}
+                shadow='0 0 10px #2299DD,0 0 5px #2299DD'
+                zIndex={1600}
+                showAtBottom={false}
+              />
+              <ToastProvider>{children}</ToastProvider>
+            </TanstackProvider>
+          </AuthProvider>
+        </Suspense>
       </body>
     </html>
   );

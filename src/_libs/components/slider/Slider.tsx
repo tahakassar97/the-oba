@@ -3,7 +3,6 @@
 import { Children, FC, ReactElement, ReactNode, useMemo } from 'react';
 import Slick, { Settings } from 'react-slick';
 import { cn } from '../utils';
-import { Icon } from '../icons/Icon';
 
 type Breakpoint = {
   breakpoint: number;
@@ -132,8 +131,12 @@ export const Slider: FC<SliderProps> = ({
     responsive: computedResponsive,
     beforeChange,
     afterChange,
-    nextArrow: arrows ? (nextArrow ?? <DefaultNextArrow />) : undefined,
-    prevArrow: arrows ? (prevArrow ?? <DefaultPrevArrow />) : undefined,
+    nextArrow: arrows
+      ? ((nextArrow as ReactElement | undefined) ?? <DefaultNextArrow />)
+      : undefined,
+    prevArrow: arrows
+      ? ((prevArrow as ReactElement | undefined) ?? <DefaultPrevArrow />)
+      : undefined,
   };
 
   const slides = Children.toArray(children) as ReactElement[];
