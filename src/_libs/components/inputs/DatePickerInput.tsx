@@ -9,9 +9,6 @@ import { ErrorMessage, getErrorMessage } from './ErrorMessage';
 import { useFocus } from '../../hooks';
 import { cn } from '../utils';
 
-import './styles.css';
-import 'react-datepicker/dist/react-datepicker.css';
-
 type Props = InputProps &
   Omit<DatePickerProps, 'selectsRange' | 'autoComplete' | 'name'> & {
     onSelectDate?: (date: Date | Date[] | null) => void;
@@ -64,9 +61,9 @@ const DatePickerInput: React.FC<Props> = ({
               <DatePicker
                 isClearable
                 selected={parsedValue}
-                onChange={(date: Date | null) => {
-                  onChange(date);
-                  props.onSelectDate?.(date);
+                onChange={(dates: Date | Date[] | null) => {
+                  onChange(dates);
+                  props.onSelectDate?.(dates);
                 }}
                 defaultValue={props.defaultValue}
                 calendarClassName='!z-40 w-full'
