@@ -3,7 +3,6 @@
 import { FC, useState } from 'react';
 
 import {
-  Button,
   DatePickerInput,
   Drawer,
   Form,
@@ -11,20 +10,30 @@ import {
   Paragraph,
   SearchInput,
   TextAreaInput,
+  TextInput,
 } from '@/_libs/components';
-import { useParams } from '@/_libs/hooks';
-import { IMeal } from '@/_libs/types';
+import { useDate, useParams } from '@/_libs/hooks';
+import { IGenericObject, IMeal } from '@/_libs/types';
 
 import { MealDetailsDrawer } from '../(components)/MealDetailsDrawer';
 import PlaceOrderDrawer from '../(components)/PlaceOrderDrawer';
 import LanguageSwitcher from '../(components)/LanguageSwitcher';
 import CategoriesList from '../(components)/CategoriesList';
 import MealsList from '../(components)/MealsList';
+import BookingConfirmation from '../(components)/BookingConfirmation';
+import { BookingValidations } from './validations';
+import { Create } from '@/_libs/api';
 
 const Menu: FC = () => {
   const [selectedItem, setSelectedItem] = useState<IMeal | null>(null);
+  const [bookingData, setBookingData] = useState<{
+    date: string;
+    phoneNumber: string;
+    notes?: string;
+  } | null>(null);
 
   const { changeParams } = useParams();
+  const { convertDateToUTC } = useDate();
 
   const onSelectItem = (item: IMeal) => {
     setSelectedItem(item);
@@ -36,12 +45,31 @@ const Menu: FC = () => {
   const maxTime = new Date();
   maxTime.setHours(22, 0, 0, 0);
 
+  const transformBody = (body: IGenericObject) => {
+    return {
+      notes: body.notes,
+      customerPhone: body.phoneNumber,
+      date: convertDateToUTC(body.date),
+    };
+  };
+
+  const handleBookingSuccess = (response: IGenericObject, formData?: IGenericObject) => {
+    setBookingData({
+      date: formData?.date || '',
+      phoneNumber: formData?.phoneNumber || '',
+      notes: formData?.notes || '',
+    });
+  };
+
   return (
     <div className='container mx-auto p-5 lg:p-8'>
       <MealDetailsDrawer item={selectedItem || null} />
+
       <PlaceOrderDrawer />
 
-      <Paragraph className='text-5xl w-full text-center font-bold text-primary! mb-5'>
+      <BookingConfirmation bookingData={bookingData} onClose={() => setBookingData(null)} />
+
+      <Paragraph className='text-2xl lg:text-5xl w-full text-center font-bold text-primary! mb-5'>
         The Oba Restaurant
       </Paragraph>
 
@@ -63,25 +91,37 @@ const Menu: FC = () => {
           title='Reserve a Table'
           className='w-full lg:w-[35vw]'
         >
-          {() => {
+          {({ close }) => {
             return (
-              <Form className='space-y-4 pb-2' hideButton>
-                <Paragraph className='text-sm text-gray-600 mt-3 mb-7'>
-                  Choose your preferred date and time for a wonderful dining experience
-                </Paragraph>
-                <DatePickerInput
-                  minTime={minTime}
-                  maxTime={maxTime}
-                  name='date'
-                  label='Select Date'
-                  showTimeSelect
-                />
-                <TextAreaInput name='notes' label='Additional Notes (Optional)' rows={5} />
-
-                <Button type='submit' className='w-full'>
-                  Reserve Table
-                </Button>
-              </Form>
+              <Create
+                url='bookings'
+                transformBody={transformBody}
+                onSuccess={(response) => {
+                  close();
+                  handleBookingSuccess(response);
+                }}
+              >
+                <Form
+                  buttonProps={{
+                    title: 'Reserve Table',
+                  }}
+                  className='space-y-4 pb-2'
+                  schema={BookingValidations}
+                >
+                  <Paragraph className='text-sm text-gray-600 mt-3 mb-7'>
+                    Choose your preferred date and time for a wonderful dining experience
+                  </Paragraph>
+                  <DatePickerInput
+                    minTime={minTime}
+                    maxTime={maxTime}
+                    name='date'
+                    label='Select Date'
+                    showTimeSelect
+                  />
+                  <TextInput label='Phone Number' name='phoneNumber' />
+                  <TextAreaInput name='notes' label='Additional Notes (Optional)' rows={5} />
+                </Form>
+              </Create>
             );
           }}
         </Drawer>

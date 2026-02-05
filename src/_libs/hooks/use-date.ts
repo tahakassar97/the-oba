@@ -73,6 +73,24 @@ const useDate = () => {
     return date;
   };
 
+  const convertDateToUTC = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const dayOfMonth = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+
+    const _date = new Date(year, month, dayOfMonth, hours, minutes, seconds);
+
+    const offsetInMs = ((_date.getTimezoneOffset() * 60)
+      * 1000);
+
+    const utcDate = formatDate(new Date(_date.getTime() + offsetInMs), 'yyyy-MM-dd HH:mm:ss');
+
+    return utcDate;
+  };
+
   return {
     formatDate,
     isTodayDate,
@@ -84,6 +102,7 @@ const useDate = () => {
     endOfMonth,
     toUTCString,
     parseTimeString,
+    convertDateToUTC
   };
 };
 

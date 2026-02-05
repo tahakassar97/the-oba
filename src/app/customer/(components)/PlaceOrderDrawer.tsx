@@ -6,6 +6,7 @@ import {
   Button,
   Drawer,
   Form,
+  Icon,
   Paragraph,
   SelectInput,
   TextInput,
@@ -13,6 +14,7 @@ import {
 import { useCartStore } from '@/app/(stores)';
 import { Create, SelectList } from '@/_libs/api';
 import { IGenericObject } from '@/_libs/types';
+import { PlaceOrderValidation } from '../menu/validations';
 
 const PlaceOrderDrawer: FC = () => {
   const items = useCartStore((s) => s.items);
@@ -22,6 +24,7 @@ const PlaceOrderDrawer: FC = () => {
     return {
       ...body,
       tableId: body.table.value,
+      status: 'preparing',
       items: items.map(({ item, quantity }) => ({
         mealId: item.id,
         quantity,
@@ -32,10 +35,29 @@ const PlaceOrderDrawer: FC = () => {
   return (
     <Drawer hideButton drawerKey='place-order' drawerValue='place-order'>
       {({ toggle }) => (
-        <Create url='orders' onSuccess={toggle} transformBody={transformBody}>
-          <Form className='flex h-[96dvh] flex-col' hideButton>
+        <Create
+          url='orders'
+          onSuccess={() => {
+            toggle();
+            useCartStore.getState().clear();
+          }}
+          transformBody={transformBody}
+        >
+          <Form
+            className='flex h-[96dvh] flex-col p-0'
+            buttonProps={{
+              title: 'Place Order',
+            }}
+            schema={PlaceOrderValidation}
+          >
             <div className='flex-1 overflow-auto px-2 lg:px-4'>
-              <Paragraph className='text-xl font-bold mb-2'>Order Summary</Paragraph>
+              <div className='flex w-full justify-between items-center mb-4'>
+                <Paragraph className='text-xl font-bold'>Order Summary</Paragraph>
+
+                <Button variant='outline' className='rounded-full' size='sm' onClick={toggle}>
+                  <Icon name='close' size={24} />
+                </Button>
+              </div>
 
               {items.length === 0 ? (
                 <div className='mt-6 rounded-md border border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-500'>
@@ -60,12 +82,7 @@ const PlaceOrderDrawer: FC = () => {
                           <div>
                             <Paragraph className='font-semibold'>{item.name}</Paragraph>
                             <div className='flex items-center gap-2 mt-2'>
-                              <AppImage
-                                src='/images/dirham.svg'
-                                alt='Dirham'
-                                width={13}
-                                height={13}
-                              />
+                              Ð
                               <Paragraph className='text-xs text-gray-500'>
                                 {quantity} × {+item?.price}
                               </Paragraph>
@@ -89,15 +106,6 @@ const PlaceOrderDrawer: FC = () => {
               <TableSelector />
 
               <TextInput name='notes' label='Customer Notes' containerClassName='mt-4' />
-
-              <div className='mt-4 flex gap-3'>
-                <Button variant='outline' className='w-1/2' onClick={toggle}>
-                  Cancel
-                </Button>
-                <Button className='w-1/2' type='submit'>
-                  Confirm Order
-                </Button>
-              </div>
             </div>
           </Form>
         </Create>
@@ -110,7 +118,7 @@ export default PlaceOrderDrawer;
 
 const TableSelector = () => {
   return (
-    <SelectList url='tables'>
+    <SelectList url='tables' enableSearch={false}>
       <SelectInput label='Table Number' name='table' optionLabel='number' optionValue='id' />
     </SelectList>
   );

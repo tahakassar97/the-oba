@@ -20,10 +20,16 @@ const MealsList: FC<Props> = ({ onSelectItem, hideActions = false }) => {
   const language = getParam('lang') || 'en';
 
   return (
-    <List url={`meals/category/${selectedCategoryId}`} ignoredParams={['lang']}>
-      {(data) => {
+    <List
+      url={`meals/category/${selectedCategoryId}?isAvailable=1`}
+      ignoredParams={['lang', 'place-order', 'item']}
+      queryOptions={{
+        enabled: !!selectedCategoryId,
+      }}
+    >
+      {(data, isLoading) => {
         return data?.length ? (
-          <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 overflow-hidden'>
+          <ul className='grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5 overflow-hidden'>
             {data?.map((meal: IGenericObject) => (
               <li
                 key={meal.id}
@@ -46,7 +52,7 @@ const MealsList: FC<Props> = ({ onSelectItem, hideActions = false }) => {
               >
                 <AppImage
                   src={meal.image}
-                  className='rounded-l-lg object-cover group-hover:scale-105 transition-300 transition-transform h-full md:w-36 w-32'
+                  className='rounded-l-lg object-cover group-hover:scale-105 transition-300 transition-transform h-full md:w-48 w-36'
                   alt='Menu Item'
                   width={120}
                   height={120}
@@ -60,8 +66,7 @@ const MealsList: FC<Props> = ({ onSelectItem, hideActions = false }) => {
                   </div>
                   <div className='flex items-center md:justify-between'>
                     <span className='flex items-center gap-2'>
-                      <AppImage src='/images/dirham.svg' alt='Dirham' width={18} height={18} />
-                      <Paragraph className='text-sm! text-gray-600'>{meal.price}</Paragraph>
+                      Ð <Paragraph className='text-sm! text-gray-600'>{meal.price}</Paragraph>
                     </span>
                     <span className='px-10 md:px-0'>
                       {cartItems.find((ci) => ci.item.id === meal.id) && !hideActions ? (
@@ -78,7 +83,7 @@ const MealsList: FC<Props> = ({ onSelectItem, hideActions = false }) => {
               </li>
             ))}
           </ul>
-        ) : (
+        ) : data?.length === 0 && !isLoading ? (
           <div className='flex justify-center items-center w-full'>
             <div className='flex flex-col h-48 justify-center gap-6 border border-primary/50 mt-5 rounded-2xl p-5 items-center w-fit'>
               <Icon name='search' size={50} className='text-primary' />
@@ -87,7 +92,7 @@ const MealsList: FC<Props> = ({ onSelectItem, hideActions = false }) => {
               </Paragraph>
             </div>
           </div>
-        );
+        ) : null;
       }}
     </List>
   );

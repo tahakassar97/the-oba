@@ -74,7 +74,7 @@ export const useAppMutation = ({
     },
 
     onError: (err: AxiosError) => {
-      errorNotify(errorMsg ?? (err?.response?.data as IGenericObject)?.Message);
+      errorNotify(errorMsg ?? (err?.response?.data as IGenericObject)?.message ?? 'Something Went Wrong!');
     },
   };
 

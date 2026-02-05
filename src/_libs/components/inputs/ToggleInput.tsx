@@ -35,6 +35,7 @@ interface ToggleInputProps {
   rightLabel?: string;
   className?: string;
   disabled?: boolean;
+  onChange?: (value: boolean) => void;
 }
 
 export function ToggleInput({
@@ -44,6 +45,7 @@ export function ToggleInput({
   rightLabel,
   className,
   disabled,
+  onChange: _onChange,
   ...props
 }: ToggleInputProps) {
   const { control, setValue } = useFormContext();
@@ -65,7 +67,12 @@ export function ToggleInput({
           {leftLabel && <label className='text-sm'>{leftLabel}</label>}
           <Switch
             checked={value}
-            onCheckedChange={onChange}
+            onCheckedChange={(checked) => {
+              onChange(checked);
+              if (_onChange) {
+                _onChange(checked);
+              }
+            }}
             disabled={disabled}
             className={cn('data-[state=checked]:bg-primary', className)}
             {...field}

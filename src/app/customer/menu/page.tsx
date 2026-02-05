@@ -42,11 +42,13 @@ const Menu: FC = () => {
 
       <PlaceOrderDrawer />
 
-      <Paragraph className='text-5xl w-full text-center font-bold text-primary! mb-5'>
+      <Paragraph className='text-2xl lg:text-5xl w-full text-center font-bold text-primary! mb-5'>
         The Oba Restaurant
       </Paragraph>
 
-      <LanguageSwitcher />
+      <div className='flex justify-between items-center w-full`'>
+        <LanguageSwitcher />
+      </div>
 
       <CategoriesList />
 

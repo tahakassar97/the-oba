@@ -12,4 +12,4 @@ export interface IMeal {
   image: string;
 }
 
-export const ORDER_STATUSES = ['pending', 'processing', 'completed', 'cancelled'];
+export const ORDER_STATUSES = ['preparing', 'ready', 'completed', 'cancelled'];

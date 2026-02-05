@@ -11,6 +11,13 @@ export const createAuthStrategy = (strategy: AuthStrategy): AuthContextType => (
   getToken: strategy.getToken,
   setToken: strategy.setToken,
   removeToken: strategy.removeToken,
+
+  isAuthenticated: () => {
+    const token = strategy.getToken();
+    return !!token;
+  },
+
+  role: strategy.role,
 });
 
 const strategy = createCookiesStrategy('accessToken');

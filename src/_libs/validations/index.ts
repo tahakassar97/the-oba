@@ -9,6 +9,8 @@ export const textValidation = validationInstance.string().trim();
 
 export const emailValidation = validationInstance.string().trim().email();
 
+export const dateValidation = validationInstance.date();
+
 export const passwordValidation = yup
   .string()
   .required('Password is required')

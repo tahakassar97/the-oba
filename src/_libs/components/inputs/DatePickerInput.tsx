@@ -9,6 +9,9 @@ import { ErrorMessage, getErrorMessage } from './ErrorMessage';
 import { useFocus } from '../../hooks';
 import { cn } from '../utils';
 
+import 'react-datepicker/dist/react-datepicker.css';
+import './styles.css';
+
 type Props = InputProps &
   Omit<DatePickerProps, 'selectsRange' | 'autoComplete' | 'name'> & {
     onSelectDate?: (date: Date | Date[] | null) => void;

@@ -5,6 +5,51 @@ import { usePathname } from 'next/navigation';
 
 import { Button, Link, Icon, IconName, cn, AppImage } from '@/_libs/components';
 import { useScrollLock } from '@/_libs/hooks';
+import { useAuth } from '@/_libs/auth';
+import { roles } from '@/_libs/auth/types';
+
+const allRoutes = [
+  {
+    href: '/admin/dashboard',
+    icon: 'home' as IconName,
+    label: 'Dashboard',
+  },
+  {
+    href: '/admin/orders',
+    icon: 'shoppingBasket' as IconName,
+    label: 'Orders',
+  },
+  {
+    href: '/admin/meals',
+    icon: 'tag' as IconName,
+    label: 'Meals',
+  },
+  {
+    href: '/admin/tables',
+    icon: 'grid3x3' as IconName,
+    label: 'Tables',
+  },
+  {
+    href: '/admin/categories',
+    icon: 'menu' as IconName,
+    label: 'Categories',
+  },
+  {
+    href: '/admin/settings',
+    icon: 'settings' as IconName,
+    label: 'Settings',
+  },
+  {
+    href: '/customer/online-menu',
+    icon: 'boxes' as IconName,
+    label: 'Online Menu',
+  },
+  {
+    href: '/customer/menu',
+    icon: 'boxes' as IconName,
+    label: 'Menu',
+  },
+];
 
 const SidebarItem = ({ href, icon, label }: { href: string; icon: IconName; label: string }) => {
   const pathname = usePathname();
@@ -65,6 +110,14 @@ const Sidebar: FC = () => {
 
   useScrollLock(isOpen);
 
+  const {
+    role: { title: role },
+  } = useAuth();
+
+  const roleRoutes = roles[role]?.routes;
+
+  const routes = allRoutes.filter((route) => roleRoutes?.includes(route.href) || false);
+
   return (
     <>
       <aside
@@ -79,7 +132,7 @@ const Sidebar: FC = () => {
           <div className='relative lg:hidden'>
             <div
               className={cn(
-                'flex items-center justify-center absolute top-5 z-20 w-8 h-8 bg-primary/30 rounded-full',
+                'flex items-center justify-center absolute top-3 z-20 w-8 h-8 bg-primary/30 rounded-full',
                 {
                   '-right-20': !isOpen,
                   'right-0': isOpen,
@@ -97,11 +150,14 @@ const Sidebar: FC = () => {
           </div>
 
           <nav className='flex flex-col gap-y-4 py-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-20rem)] thin-scroll px-3'>
-            <SidebarItem href='/admin/dashboard' icon='home' label='Dashboard' />
-            <SidebarItem href='/admin/orders' icon='shoppingBasket' label='Orders' />
-            <SidebarItem href='/admin/meals' icon='tag' label='Meals' />
-            <SidebarItem href='/admin/tables' icon='grid3x3' label='Tables' />
-            <SidebarItem href='/admin/categories' icon='menu' label='Categories' />
+            {routes.map((route) => (
+              <SidebarItem
+                key={route.href}
+                href={route.href}
+                icon={route.icon}
+                label={route.label}
+              />
+            ))}
           </nav>
         </div>
 

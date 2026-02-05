@@ -1,6 +1,6 @@
 import { getCookie, setCookie, deleteCookie } from 'cookies-next/client';
 
-import { AuthStrategy } from '../types';
+import { AuthStrategy, UserRolesTitles } from '../types';
 
 // Define the shape of our server-side storage
 interface ServerStorage {
@@ -25,14 +25,39 @@ const serverStorage: ServerStorage = {
 export const createCookiesStrategy = (name: string): AuthStrategy => {
   return {
     getToken: () => getCookie(name),
-    setToken: (token: string) =>
+    setToken: (token: string, role?: string) => {
       setCookie(name, token, {
         priority: 'high',
         sameSite: 'strict',
         secure: true,
-        expires: new Date(Date.now() + 60 * 60 * 24 * 3), // 3 days
-        maxAge: 60 * 60 * 24 * 3, // 3 days
-      }),
-    removeToken: () => deleteCookie(name),
+        expires: new Date(Date.now() + 60 * 60 * 24), // 1 day
+        maxAge: 60 * 60 * 24,
+      });
+
+      // Set user role cookie if provided
+      if (role) {
+        setCookie('userRole', role, {
+          priority: 'high',
+          sameSite: 'strict',
+          secure: true,
+          expires: new Date(Date.now() + 60 * 60 * 24), // 1 day
+          maxAge: 60 * 60 * 24
+        });
+      }
+    },
+    removeToken: () => {
+      deleteCookie(name);
+      deleteCookie('userRole');
+    },
+
+    isAuthenticated: () => {
+      const token = getCookie(name);
+      return !!token;
+    },
+
+    role: {
+      title: getCookie('userRole') as UserRolesTitles || '',
+      routes: [],
+    },
   };
 };

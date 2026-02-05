@@ -4,3 +4,4 @@ export * from './use-toast';
 export * from './use-scroll-lock';
 export * from './use-params';
 export * from './use-search';
+export * from './use-sounds';

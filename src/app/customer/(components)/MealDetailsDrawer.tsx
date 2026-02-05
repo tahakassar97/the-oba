@@ -50,7 +50,7 @@ export const MealDetailsDrawer: FC<Props> = ({ item }) => {
               </Form>
 
               <div className='flex items-center justify-end w-full gap-3 mt-3'>
-                <AppImage src='/images/dirham.svg' alt='Dirham' width={20} height={20} />
+                Ð
                 <Paragraph variant='p' className='font-semibold text-end'>
                   {item?.price} x {currentQty}
                 </Paragraph>

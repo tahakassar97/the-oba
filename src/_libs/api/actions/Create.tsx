@@ -13,7 +13,7 @@ interface Props {
   message?: string;
   headers?: object;
   transformBody?: (body: IGenericObject) => Promise<object> | object;
-  onSuccess?: (response: IGenericObject) => void;
+  onSuccess?: (response: IGenericObject, formData?: IGenericObject) => void;
 }
 
 const Create: FC<Props> = ({
@@ -39,7 +39,7 @@ const Create: FC<Props> = ({
 
     await mutateAsync(body, {
       onSuccess: (response: unknown) => {
-        if (response) onSuccess?.(response);
+        if (response) onSuccess?.(response as IGenericObject, data as IGenericObject);
       },
     });
   };

@@ -12,8 +12,8 @@ const CreateCategoryDrawer: FC = () => {
     formData.append('arName', body.arName);
     formData.append('enName', body.enName);
 
-    if (body.image && body.image instanceof File) {
-      formData.append('image', body.image);
+    if (body.image && body.image?.file instanceof File) {
+      formData.append('image', body.image?.file);
     }
 
     return formData;

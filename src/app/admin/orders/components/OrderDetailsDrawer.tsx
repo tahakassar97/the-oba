@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import { Activity, FC } from 'react';
 
 import { AppImage, Button, Drawer, Form, Icon, Paragraph, SelectInput } from '@/_libs/components';
 import { GetOne, useUpdate } from '@/_libs/api';
-import { IGenericObject } from '@/_libs/types';
+import { IGenericObject, ORDER_STATUSES } from '@/_libs/types';
 
 interface Props {
   orderId: string | number;
@@ -13,7 +13,7 @@ const OrderDetailsDrawer: FC<Props> = ({ orderId }) => {
     url: 'orders',
     message: 'Order status updated successfully',
   });
-  const onChangeStatus = async (status: string) => {
+  const onChangeStatus = async (status: (typeof ORDER_STATUSES)[number]) => {
     await mutateAsync({
       id: orderId.toString(),
       status,
@@ -58,12 +58,7 @@ const OrderDetailsDrawer: FC<Props> = ({ orderId }) => {
                           <Paragraph className='font-semibold text-sm'>{meal.enName}</Paragraph>
                           <div className='flex items-center justify-between'>
                             <div className='flex items-center gap-2'>
-                              <AppImage
-                                src='/images/dirham.svg'
-                                alt='Dirham'
-                                width={15}
-                                height={15}
-                              />
+                              Ð
                               <Paragraph className='text-sm! text-gray-600'>{meal.price}</Paragraph>
                             </div>
 
@@ -76,9 +71,12 @@ const OrderDetailsDrawer: FC<Props> = ({ orderId }) => {
                       </li>
                     ))}
                   </ul>
-                  <Paragraph className='font-semibold text-xs text-gray-400 break-all line-clamp-4 w-72 mt-5 border border-gray-300 rounded-md p-2'>
-                    {data?.notes}
-                  </Paragraph>
+
+                  <Activity mode={data?.notes ? 'visible' : 'hidden'}>
+                    <Paragraph className='font-semibold text-xs text-gray-400 break-all line-clamp-4 w-72 mt-5 border border-gray-300 rounded-md p-2'>
+                      {data.notes}
+                    </Paragraph>
+                  </Activity>
 
                   <Form hideButton className='mt-8 px-1'>
                     <SelectInput
@@ -87,12 +85,10 @@ const OrderDetailsDrawer: FC<Props> = ({ orderId }) => {
                       label='Status'
                       isDisabled={data?.status === 'completed' || data?.status === 'cancelled'}
                       name='status'
-                      options={[
-                        { label: 'Pending', value: 'pending' },
-                        { label: 'Processing', value: 'processing' },
-                        { label: 'Completed', value: 'completed' },
-                        { label: 'Cancelled', value: 'cancelled' },
-                      ]}
+                      options={ORDER_STATUSES.map((status) => ({
+                        label: status.charAt(0).toUpperCase() + status.slice(1),
+                        value: status,
+                      }))}
                       className='text-xs'
                       onSelect={({ value }) => onChangeStatus(value)}
                       defaultValue={data?.status}

@@ -1,101 +1,38 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 
 import { SearchInput, Table, TableField } from '@/_libs/components';
-import { useDate, useSearch } from '@/_libs/hooks';
-import { ORDER_STATUSES } from '@/_libs/types';
+import { useDate, useSearch, useSound, useToast } from '@/_libs/hooks';
+import { IGenericObject, ORDER_STATUSES } from '@/_libs/types';
+import { List } from '@/_libs/api';
 
 import { OrderDetailsDrawer } from './components/OrderDetailsDrawer';
 import PageHead from '../_layouts/PageHead';
-import { List } from '@/_libs/api';
-
-const data = [
-  {
-    id: 1,
-    tableNo: 'Table 1',
-    orderDate: new Date(),
-    servedAt: new Date(),
-    total: '100',
-    status: 'pending',
-    meals: [
-      {
-        id: 1,
-        name: 'Meal 1',
-        quantity: 2,
-      },
-      {
-        id: 2,
-        name: 'Meal 2',
-        quantity: 1,
-      },
-    ],
-  },
-  {
-    id: 2,
-    tableNo: 'Table 2',
-    orderDate: new Date(),
-    servedAt: new Date(),
-    total: '100',
-    status: 'processing',
-    meals: [
-      {
-        id: 7,
-        name: 'Meal 3',
-        quantity: 2,
-      },
-      {
-        id: 5,
-        name: 'Meal 4',
-        quantity: 3,
-      },
-    ],
-  },
-  {
-    id: 3,
-    tableNo: 'Table 3',
-    orderDate: new Date(),
-    servedAt: new Date(),
-    total: '100',
-    status: 'cancelled',
-    meals: [
-      {
-        id: 4,
-        name: 'Meal 4',
-        quantity: 2,
-      },
-      {
-        id: 10,
-        name: 'Meal 10',
-        quantity: 3,
-      },
-    ],
-  },
-  {
-    id: 4,
-    tableNo: 'Table 4',
-    orderDate: new Date(),
-    servedAt: new Date(),
-    total: '100',
-    status: 'completed',
-    meals: [
-      {
-        id: 11,
-        name: 'Meal 12',
-        quantity: 1,
-      },
-      {
-        id: 6,
-        name: 'Meal 6',
-        quantity: 2,
-      },
-    ],
-  },
-];
+import { useOrderStream } from '@/app/(hooks)';
+import { useAuth } from '@/_libs/auth';
+import { UserRolesTitles } from '@/_libs/auth/types';
 
 const Orders: FC = () => {
   const { setSearchQuery, query } = useSearch('query');
-  const { formatDate } = useDate();
+  const { successNotify } = useToast(undefined, { duration: 60000 });
+
+  const { formatDate, isTodayDate } = useDate();
+
+  const { play } = useSound();
+
+  const { notification } = useOrderStream();
+
+  const { role } = useAuth();
+
+  useEffect(() => {
+    if (notification && role.title === UserRolesTitles.WAITER) {
+      successNotify(notification.message);
+      play();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notification]);
 
   return (
     <>
@@ -113,23 +50,42 @@ const Orders: FC = () => {
           url='orders'
           ignoredParams={['order-details']}
           queryOptions={{
-            refetchInterval: 20000,
+            refetchInterval: 30000,
           }}
         >
-          <Table data={data}>
+          <Table>
             <TableField name='id' header='Order ID' />
 
             <TableField
               name='createdAt'
               header='Order Date'
-              transform={(date) => formatDate(date as string | Date, 'dd MMM, yyyy hh:mm a')}
+              transform={(date) => {
+                if (isTodayDate(date as string | Date)) {
+                  return `Today, ${formatDate(date as string | Date, 'hh:mm a')}`;
+                }
+
+                return formatDate(date as string | Date, 'dd MMM, yyyy');
+              }}
+            />
+
+            <TableField
+              header='Ready At'
+              transform={(data: IGenericObject) => {
+                return [ORDER_STATUSES[1], ORDER_STATUSES[2]].includes(data?.status)
+                  ? isTodayDate(data?.readyAt as string | Date)
+                    ? `Today, ${formatDate(data?.readyAt as string | Date, 'hh:mm a')}`
+                    : formatDate(data?.readyAt as string | Date, 'dd MMM, yyyy hh:mm a')
+                  : 'No ready';
+              }}
             />
 
             <TableField
               header='Served At'
               transform={(data) =>
                 data?.status === ORDER_STATUSES[2]
-                  ? formatDate(data?.updatedAt as string | Date, 'dd MMM, yyyy hh:mm a')
+                  ? isTodayDate(data?.updatedAt as string | Date)
+                    ? `Today, ${formatDate(data?.updatedAt as string | Date, 'hh:mm a')}`
+                    : formatDate(data?.updatedAt as string | Date, 'dd MMM, yyyy hh:mm a')
                   : 'Not served'
               }
             />
@@ -151,9 +107,9 @@ const Orders: FC = () => {
                 return (
                   <span
                     className={`px-3 py-1 rounded-full text-white font-semibold text-[11px] capitalize ${
-                      data?.status === 'pending'
+                      data?.status === 'ready'
                         ? 'bg-primary'
-                        : data?.status === 'processing'
+                        : data?.status === 'preparing'
                           ? 'bg-yellow-500'
                           : data?.status === 'cancelled'
                             ? 'bg-red-500'

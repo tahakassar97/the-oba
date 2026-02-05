@@ -20,7 +20,7 @@ const ErrorPage: React.FC = () => {
           the home page.
         </p>
         <div className='flex justify-center'>
-          <Button onClick={() => router.push('/admin/dashboard')} variant='gradient'>
+          <Button onClick={() => router.push('/admin/orders')} variant='gradient'>
             Back to Home
           </Button>
         </div>
