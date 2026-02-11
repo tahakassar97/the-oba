@@ -22,7 +22,7 @@ const CreateCategoryDrawer: FC = () => {
   return (
     <Drawer
       buttonProps={{
-        label: '+ Create Category',
+        label: 'Create Category',
         variant: 'primary',
       }}
       drawerKey='create-category'

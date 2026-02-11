@@ -17,12 +17,12 @@
 
 @utility input {
   @apply w-full text-sm rounded-md px-3 py-3
-    bg-white border border-primary/50
-    outline-none ring-0
+    bg-white
+    outline-none! ring-1 ring-primary
     transition-all duration-300 ease-in-out;
 }
 .input:focus {
-  @apply ring-2 ring-primary/40 border-primary;
+  @apply ring-2;
 }
 .input-invalid:focus {
   @apply ring-2 ring-red-400 border-red-500;

@@ -33,7 +33,7 @@ const MealsList: FC<Props> = ({ onSelectItem, hideActions = false }) => {
             {data?.map((meal: IGenericObject) => (
               <li
                 key={meal.id}
-                className='flex gap-3 rounded-lg h-40 border cursor-pointer shadow border-gray-200 transition-300 hover:border-secondary group overflow-hidden'
+                className='flex gap-3 rounded-lg h-40 border cursor-pointer shadow border-gray-200 transition-300 w-full hover:border-secondary group overflow-hidden'
                 onClick={
                   !hideActions
                     ? () =>
@@ -50,27 +50,34 @@ const MealsList: FC<Props> = ({ onSelectItem, hideActions = false }) => {
                     : undefined
                 }
               >
-                <AppImage
-                  src={meal.image}
-                  className='rounded-l-lg object-cover group-hover:scale-105 transition-300 transition-transform h-full md:w-48 w-36'
-                  alt='Menu Item'
-                  width={120}
-                  height={120}
-                />
-                <div className='flex flex-col justify-between w-full py-2 pr-3'>
+                <div className='relative w-32 md:w-36 h-40 rounded-l-lg overflow-hidden shrink-0 bg-gray-100'>
+                  <AppImage
+                    src={meal.image}
+                    className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+                    alt={meal?.[language + 'Name']}
+                    width={144}
+                    height={160}
+                  />
+                </div>
+                <div className='flex flex-col justify-between flex-1 py-2 pr-3 min-w-0'>
                   <div>
-                    <Paragraph className='font-semibold'>{meal?.[language + 'Name']}</Paragraph>
-                    <Paragraph className='font-semibold text-xs text-gray-400 break-all line-clamp-4 w-72 mt-2'>
+                    <Paragraph className='font-semibold line-clamp-2'>
+                      {meal?.[language + 'Name']}
+                    </Paragraph>
+                    <Paragraph className='font-semibold text-xs text-gray-400 break-all line-clamp-3 mt-1'>
                       {meal?.[language + 'Description']}
                     </Paragraph>
                   </div>
-                  <div className='flex items-center md:justify-between'>
-                    <span className='flex items-center gap-2'>
-                      Ð <Paragraph className='text-sm! text-gray-600'>{meal.price}</Paragraph>
+                  <div className='flex items-center justify-between gap-2 flex-wrap'>
+                    <span className='flex items-center gap-1 whitespace-nowrap'>
+                      Ð{' '}
+                      <Paragraph className='text-sm! text-gray-600 truncate'>
+                        {meal.price}
+                      </Paragraph>
                     </span>
-                    <span className='px-10 md:px-0'>
+                    <span className=''>
                       {cartItems.find((ci) => ci.item.id === meal.id) && !hideActions ? (
-                        <Paragraph className='text-sm! text-primary underline'>
+                        <Paragraph className='text-xs! md:text-sm! text-primary underline whitespace-nowrap'>
                           <strong className='font-semibold'>
                             {cartItems.find((ci) => ci.item.id === meal.id)?.quantity}
                           </strong>{' '}

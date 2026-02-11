@@ -91,6 +91,19 @@ const useDate = () => {
     return utcDate;
   };
 
+  const combineDateTime = (date: Date, time: Date) => {
+    const combined = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      time.getHours(),
+      time.getMinutes(),
+      time.getSeconds()
+    );
+
+    return combined;
+  };
+
   return {
     formatDate,
     isTodayDate,
@@ -102,7 +115,8 @@ const useDate = () => {
     endOfMonth,
     toUTCString,
     parseTimeString,
-    convertDateToUTC
+    convertDateToUTC,
+    combineDateTime
   };
 };
 

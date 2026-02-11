@@ -18,7 +18,10 @@ import { PlaceOrderValidation } from '../menu/validations';
 
 const PlaceOrderDrawer: FC = () => {
   const items = useCartStore((s) => s.items);
-  const totalItems = useCartStore((s) => s.totalItems());
+
+  const subTotal = items.reduce((acc, { item, quantity }) => acc + item.price * quantity, 0);
+
+  const total = (subTotal * 5) / 100 + subTotal;
 
   const transformBody = async (body: IGenericObject) => {
     return {
@@ -29,6 +32,7 @@ const PlaceOrderDrawer: FC = () => {
         mealId: item.id,
         quantity,
       })),
+      totalAmount: total,
     };
   };
 
@@ -46,7 +50,7 @@ const PlaceOrderDrawer: FC = () => {
           <Form
             className='flex h-[96dvh] flex-col p-0'
             buttonProps={{
-              title: 'Place Order',
+              title: 'Submit',
             }}
             schema={PlaceOrderValidation}
           >
@@ -54,8 +58,8 @@ const PlaceOrderDrawer: FC = () => {
               <div className='flex w-full justify-between items-center mb-4'>
                 <Paragraph className='text-xl font-bold'>Order Summary</Paragraph>
 
-                <Button variant='outline' className='rounded-full' size='sm' onClick={toggle}>
-                  <Icon name='close' size={24} />
+                <Button variant='outline' size='sm' onClick={toggle}>
+                  <Icon name='close' size={16} />
                 </Button>
               </div>
 
@@ -97,15 +101,22 @@ const PlaceOrderDrawer: FC = () => {
             </div>
 
             {/* Footer */}
-            <div className='mt-4 rounded-t-xl border-t border-gray-200 bg-white p-4'>
-              <div className='mb-3 flex items-center justify-between text-sm text-gray-600'>
-                <span>Items</span>
-                <span className='font-semibold'>{totalItems}</span>
-              </div>
-
+            <div className='mt-5 rounded-t-xl border-t border-gray-200 bg-white p-4'>
               <TableSelector />
 
               <TextInput name='notes' label='Customer Notes' containerClassName='mt-4' />
+
+              <div className='h-px w-full bg-primary/50 mt-3 mb-5' />
+
+              <div className='my-3 flex items-center justify-between text-sm text-gray-600'>
+                <span>Subtotal</span>
+                <span className='font-semibold'>{subTotal} Ð</span>
+              </div>
+
+              <div className='flex items-center justify-between text-sm text-green-600'>
+                <span>Total (Subtotal + 5% tax)</span>
+                <span className='font-semibold'>{total} Ð</span>
+              </div>
             </div>
           </Form>
         </Create>

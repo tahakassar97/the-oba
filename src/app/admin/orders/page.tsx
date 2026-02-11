@@ -1,50 +1,48 @@
 'use client';
 
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 
-import { SearchInput, Table, TableField } from '@/_libs/components';
-import { useDate, useSearch, useSound, useToast } from '@/_libs/hooks';
+import { DatePickerInput, Form, SearchInput, Table, TableField } from '@/_libs/components';
+import { useDate, useParams, useSearch } from '@/_libs/hooks';
 import { IGenericObject, ORDER_STATUSES } from '@/_libs/types';
 import { List } from '@/_libs/api';
 
 import { OrderDetailsDrawer } from './components/OrderDetailsDrawer';
 import PageHead from '../_layouts/PageHead';
-import { useOrderStream } from '@/app/(hooks)';
-import { useAuth } from '@/_libs/auth';
-import { UserRolesTitles } from '@/_libs/auth/types';
 
 const Orders: FC = () => {
   const { setSearchQuery, query } = useSearch('query');
-  const { successNotify } = useToast(undefined, { duration: 60000 });
+  const { changeParams } = useParams();
 
   const { formatDate, isTodayDate } = useDate();
 
-  const { play } = useSound();
+  const onSelectDate = (date: Date | Date[] | null) => {
+    if (date && date instanceof Date) changeParams('date', formatDate(date, 'yyyy-MM-dd'));
 
-  const { notification } = useOrderStream();
-
-  const { role } = useAuth();
-
-  useEffect(() => {
-    if (notification && role.title === UserRolesTitles.WAITER) {
-      successNotify(notification.message);
-      play();
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [notification]);
+    if (!date) changeParams('date', '');
+  };
 
   return (
     <>
       <PageHead title='Orders' />
 
       <div className='p-5 bg-white rounded-lg border border-gray-200'>
-        <SearchInput
-          placeholder='Search orders'
-          className='mb-4'
-          defaultValue={query}
-          onSearch={(query) => setSearchQuery(query)}
-        />
+        <div className='flex justify-between mb-4 items-center w-full'>
+          <SearchInput
+            placeholder='Search orders'
+            defaultValue={query}
+            onSearch={(query) => setSearchQuery(query)}
+          />
+
+          <Form hideButton className='p-0! m-0! w-fit'>
+            <DatePickerInput
+              popperPlacement='bottom-start'
+              name='date'
+              label='Select Order Date'
+              onSelectDate={onSelectDate}
+            />
+          </Form>
+        </div>
 
         <List
           url='orders'

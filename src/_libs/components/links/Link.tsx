@@ -17,22 +17,21 @@ export function Link({ href, children, ...props }: LinkProps) {
     href.startsWith('mailto:') ||
     href.startsWith('tel:');
 
-  if (isExternal) {
-    return (
-      <a
-        href={href}
-        target={props.target || '_blank'}
-        rel={props.rel || 'noopener noreferrer'}
-        {...props}
-        className={cn('transition-300', props.className)}
-      >
-        {children}
-      </a>
-    );
-  }
+  const externalProps = isExternal
+    ? {
+        target: props.target || '_blank',
+        rel: props.rel || 'noopener noreferrer',
+        prefetch: false,
+      }
+    : {};
 
   return (
-    <NextLink href={href} {...props} className={cn('transition-300', props.className)}>
+    <NextLink
+      href={href}
+      {...props}
+      {...externalProps}
+      className={cn('transition-300', props.className)}
+    >
       {children}
     </NextLink>
   );

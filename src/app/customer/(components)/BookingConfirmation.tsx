@@ -1,9 +1,9 @@
 'use client';
 
 import { FC } from 'react';
-import { format } from 'date-fns';
 
 import { Button, Icon } from '@/_libs/components';
+import { useDate } from '@/_libs/hooks';
 
 interface BookingConfirmationProps {
   bookingData: {
@@ -15,11 +15,13 @@ interface BookingConfirmationProps {
 }
 
 const BookingConfirmation: FC<BookingConfirmationProps> = ({ bookingData, onClose }) => {
+  const { formatDate } = useDate();
+
   if (!bookingData) return null;
 
-  const bookingDate = new Date(bookingData.date);
-  const formattedDate = format(bookingDate, 'EEEE, MMMM dd, yyyy');
-  const formattedTime = format(bookingDate, 'hh:mm a');
+  const bookingDate = bookingData.date;
+  const formattedDate = formatDate(bookingDate, 'EEEE, MMMM do');
+  const formattedTime = formatDate(bookingDate, 'hh:mm a');
 
   return (
     <div className='fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4'>
@@ -93,11 +95,7 @@ const BookingConfirmation: FC<BookingConfirmationProps> = ({ bookingData, onClos
         </div>
 
         {/* Close Button */}
-        <Button
-          onClick={onClose}
-          type='button'
-          className='w-full bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 rounded-lg transition-all duration-200'
-        >
+        <Button onClick={onClose} type='button' variant='gradient' className='w-full'>
           Close
         </Button>
       </div>

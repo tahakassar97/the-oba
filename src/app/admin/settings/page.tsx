@@ -12,17 +12,17 @@ const Settings: FC = () => {
       title: 'Online Menu',
       description: 'Manage your online menu and customer experience',
       icon: 'globe',
-      href: '/customer/online-menu',
-      color: 'from-blue-500 to-blue-600',
+      href: 'https://the-oba.vercel.app/customer/online-menu',
+      color: 'from-primary/70 to-primary/90',
       iconColor: '#3B82F6',
     },
     {
       id: 'menu',
-      title: 'Menu Management',
-      description: 'Create and manage meals, categories, and pricing',
+      title: 'Restaurant Menu',
+      description: 'Manage your restaurant menu',
       icon: 'menu',
-      href: '/admin/meals',
-      color: 'from-orange-500 to-orange-600',
+      href: 'https://the-oba.vercel.app/customer/menu',
+      color: 'from-secondary/70 to-secondary/90',
       iconColor: '#F97316',
     },
   ];
@@ -31,7 +31,7 @@ const Settings: FC = () => {
     <>
       <PageHead title='Settings' />
 
-      <div className='space-y-6'>
+      <div className='space-y-6 bg-white rounded-2xl border border-gray-200 p-6'>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           {navigationItems.map((item) => (
             <Link key={item.id} href={item.href} className='group'>

@@ -4,9 +4,9 @@ import { Icon, Paragraph } from '@/_libs/components';
 
 const Header: FC = () => {
   return (
-    <header className='fixed w-full shadow bg-white backdrop-blur-lg py-4 flex items-center justify-between z-20 pl-79 pr-5'>
+    <header className='fixed w-full shadow bg-white backdrop-blur-lg py-4 flex items-center  justify-end lg:justify-between z-20 lg:pl-79 pr-5'>
       <span className='flex items-center space-x-2'>
-        <Paragraph variant='h4' textColor='primary' className='font-bold'>
+        <Paragraph variant='h4' className='text-black font-bold'>
           The Oba Restaurant
         </Paragraph>
       </span>

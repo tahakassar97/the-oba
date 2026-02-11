@@ -33,7 +33,7 @@ const Menu: FC = () => {
   } | null>(null);
 
   const { changeParams } = useParams();
-  const { convertDateToUTC } = useDate();
+  const { combineDateTime } = useDate();
 
   const onSelectItem = (item: IMeal) => {
     setSelectedItem(item);
@@ -46,17 +46,19 @@ const Menu: FC = () => {
   maxTime.setHours(22, 0, 0, 0);
 
   const transformBody = (body: IGenericObject) => {
+    const date = combineDateTime(new Date(), body.time);
+
     return {
       notes: body.notes,
       customerPhone: body.phoneNumber,
-      date: convertDateToUTC(body.date),
+      date,
     };
   };
 
-  const handleBookingSuccess = (response: IGenericObject, formData?: IGenericObject) => {
+  const handleBookingSuccess = (formData: IGenericObject) => {
     setBookingData({
       date: formData?.date || '',
-      phoneNumber: formData?.phoneNumber || '',
+      phoneNumber: formData?.customerPhone || '',
       notes: formData?.notes || '',
     });
   };
@@ -116,7 +118,15 @@ const Menu: FC = () => {
                     maxTime={maxTime}
                     name='date'
                     label='Select Date'
+                  />
+                  <DatePickerInput
+                    minTime={minTime}
+                    maxTime={maxTime}
+                    name='time'
+                    label='Select Time'
                     showTimeSelect
+                    showDateSelect={false}
+                    showTimeSelectOnly
                   />
                   <TextInput label='Phone Number' name='phoneNumber' />
                   <TextAreaInput name='notes' label='Additional Notes (Optional)' rows={5} />

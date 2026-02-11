@@ -25,13 +25,14 @@ const CategoriesList: FC = () => {
 
   return (
     <Slider
-      slidesToShow={10}
       arrows
       responsive={[
-        { breakpoint: 1536, settings: { slidesToShow: 10 } },
-        { breakpoint: 1280, settings: { slidesToShow: 8 } },
-        { breakpoint: 1024, settings: { slidesToShow: 4 } },
+        { breakpoint: 1920, settings: { slidesToShow: 10 } },
+        { breakpoint: 1536, settings: { slidesToShow: 7 } },
+        { breakpoint: 1280, settings: { slidesToShow: 6 } },
+        { breakpoint: 1024, settings: { slidesToShow: 5 } },
         { breakpoint: 640, settings: { slidesToShow: 3 } },
+        { breakpoint: 375, settings: { slidesToShow: 1 } },
       ]}
       className='py-2 px-2 lg:px-5'
     >
@@ -46,15 +47,17 @@ const CategoriesList: FC = () => {
           )}
           onClick={() => setCategory(item.id)}
         >
-          <div className='flex flex-col items-center justify-center h-28 rounded-md'>
-            <AppImage
-              src={item.image}
-              className='rounded-full group-hover:scale-105 transition-300'
-              alt='Menu Item'
-              width={80}
-              height={80}
-            />
-            <Paragraph className='font-semibold mt-1 text-xs'>
+          <div className='flex flex-col items-center justify-center gap-2 h-32'>
+            <div className='flex items-center justify-center w-24 h-24 rounded-full bg-gray-100 overflow-hidden shrink-0'>
+              <AppImage
+                src={item.image}
+                className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+                alt={item?.[language + 'Name']}
+                width={96}
+                height={96}
+              />
+            </div>
+            <Paragraph className='font-semibold text-xs text-center line-clamp-1 px-1'>
               {item?.[language + 'Name']}
             </Paragraph>
           </div>

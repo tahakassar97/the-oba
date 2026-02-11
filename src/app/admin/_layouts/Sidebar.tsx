@@ -35,6 +35,11 @@ const allRoutes = [
     label: 'Categories',
   },
   {
+    href: '/admin/users',
+    icon: 'users' as IconName,
+    label: 'Users',
+  },
+  {
     href: '/admin/settings',
     icon: 'settings' as IconName,
     label: 'Settings',
@@ -51,7 +56,11 @@ const allRoutes = [
   },
 ];
 
-const SidebarItem = ({ href, icon, label }: { href: string; icon: IconName; label: string }) => {
+const SidebarItem: FC<{ href: string; icon: IconName; label: string }> = ({
+  href,
+  icon,
+  label,
+}) => {
   const pathname = usePathname();
   const isActive = pathname.includes(href);
 
@@ -114,9 +123,9 @@ const Sidebar: FC = () => {
     role: { title: role },
   } = useAuth();
 
-  const roleRoutes = roles[role]?.routes;
+  const roleRoutes = role && roles[role] ? roles[role].routes : [];
 
-  const routes = allRoutes.filter((route) => roleRoutes?.includes(route.href) || false);
+  const routes = allRoutes.filter((route) => roleRoutes.includes(route.href));
 
   return (
     <>
@@ -160,52 +169,6 @@ const Sidebar: FC = () => {
             ))}
           </nav>
         </div>
-
-        {/* <div className='px-2 lg:px-6 lg:flex hidden'>
-          <div className='bg-linear-to-br w-full from-secondary/20 to-secondary/50 rounded-lg lg:p-4 p-2 text-center shadow-md'>
-            <div className='mb-2 flex justify-center'>
-              <div className='bg-white p-2 rounded-full shadow-sm'>
-                <Icon name='calendar' className='h-5 w-5 text-secondary' />
-              </div>
-            </div>
-            <Paragraph
-              variant='small'
-              textColor='secondary'
-              className='mb-2 font-bold text-gray-800 text-sm'
-            >
-              Quick Actions
-            </Paragraph>
-            <div className='flex flex-col gap-y-1.5 mb-2'>
-              <Link href='/admin/services/create'>
-                <Button
-                  className='bg-white/50 rounded-md p-2 flex items-center w-full justify-between hover:bg-white/70 text-secondary hover:text-secondary transition-all'
-                  variant='link'
-                  size='sm'
-                >
-                  <span className='flex items-center gap-2'>
-                    <Icon name='plus' className='text-secondary' />
-                    Add Service
-                  </span>
-                  <Icon name='chevronRight' className='text-secondary' />
-                </Button>
-              </Link>
-
-              <Link href='/admin/employees/create'>
-                <Button
-                  className='bg-white/50 rounded-md p-2 flex items-center w-full  justify-between hover:bg-white/70 text-secondary hover:text-secondary transition-all'
-                  variant='link'
-                  size='sm'
-                >
-                  <span className='flex items-center gap-2'>
-                    <Icon name='plus' className='text-secondary' />
-                    Add Employee
-                  </span>
-                  <Icon name='chevronRight' className='text-secondary' />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div> */}
       </aside>
       {isOpen && (
         <div

@@ -35,13 +35,7 @@ const TablesPage: FC = () => {
           />
           <Drawer
             buttonProps={{
-              label: (
-                <div className='flex items-center gap-1.5'>
-                  <Icon name='plus' size={16} />
-                  Add Table
-                </div>
-              ),
-              size: 'default',
+              label: 'Add Table',
             }}
           >
             {({ close }) => {
